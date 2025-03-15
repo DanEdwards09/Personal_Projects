@@ -400,36 +400,3 @@ if len(models) > 0:
 else:
     print("No models were successfully trained.")
 
-# 6. PROJECT EXPLANATION
-print("""
-\n=== PROJECT EXPLANATION ===
-
-This stock market prediction project uses XGBoost to predict daily price movements:
-
-1. DATA: We used historical stock data from the S&P 500 dataset, focusing on key stocks.
-
-2. FEATURES: We engineered technical indicators including:
-   - Moving averages (MA5, MA20)
-   - Price returns (1-day and 5-day)
-   - Volume changes
-
-3. MODEL: We trained an XGBoost classifier to predict whether prices would go up or down
-   the next trading day.
-
-4. EVALUATION: We assessed model performance using:
-   - Accuracy metrics
-   - Confusion matrices
-   - ROC curves and AUC values
-   - Feature importance analysis
-
-5. TRADING STRATEGY: We implemented a simple algorithmic trading strategy:
-   - Buy when model predicts >55% probability of price increase
-   - Sell when model predicts >55% probability of price decrease
-   - Compared returns against a buy-and-hold baseline
-
-Future improvements could include:
-- Adding more sophisticated features (RSI, MACD, Bollinger Bands)
-- Hyperparameter tuning for better model performance
-- More advanced trading strategies with position sizing
-- Ensemble models combining multiple prediction approaches
-""")
