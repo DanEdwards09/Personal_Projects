@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade Settlement Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.5.1/dist/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react@17/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@17/umd/react-dom.production.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-6">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Trade Settlement Dashboard</h1>
+            <div class="text-sm text-gray-500">Last updated: <span id="last-updated">Loading...</span></div>
+        </div>
+
+        <div id="dashboard-root">
+            <!-- React dashboard will be mounted here -->
+            <div class="flex items-center justify-center h-64">
+                <div class="text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                    <p class="text-xl text-gray-600">Loading dashboard...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include React Dashboard Component -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+    <!-- Temporary fallback if the React component isn't loaded -->
+    <script>
+        document.getElementById('last-updated').textContent = new Date().toLocaleString();
+        
+        // Connect to WebSocket for real-time updates
+        const socket = io();
+        
+        socket.on('connect', function() {
+            console.log('Connected to WebSocket');
+        });
+        
+        socket.on('trade_update', function(data) {
+            console.log('Trade update received:', data);
+            document.getElementById('last-updated').textContent = new Date().toLocaleString();
+        });
+        
+        socket.on('disconnect', function() {
+            console.log('Disconnected from WebSocket');
+        });
+    </script>
+</body>
+</html>

@@ -17,6 +17,24 @@ logging.basicConfig(
 )
 logger = logging.getLogger("EnhancedTradeSys")
 
+class EventEmitter:
+    """Simple event emitter for workflow status changes"""
+    
+    def __init__(self):
+        self.handlers = {}
+    
+    def on(self, event_name, handler):
+        """Register an event handler"""
+        if event_name not in self.handlers:
+            self.handlers[event_name] = []
+        self.handlers[event_name].append(handler)
+    
+    def emit(self, event_name, *args, **kwargs):
+        """Emit an event to all registered handlers"""
+        if event_name in self.handlers:
+            for handler in self.handlers[event_name]:
+                handler(*args, **kwargs)
+
 class TradeStatus(Enum):
     """Enhanced enum for trade status tracking with clearing steps"""
     NEW = "NEW"
@@ -36,7 +54,17 @@ class EnhancedTradeWorkflow:
         """Initialize the workflow with a database"""
         self.db_path = db_path
         self._setup_database()
+        self.events = EventEmitter()  # Add event emitter
         logger.info("Enhanced Trade Settlement Workflow initialized")
+    
+    def on_status_change(self, status, handler):
+        """Register a handler for a specific status change"""
+        event_name = f'status_{status.lower()}'
+        self.events.on(event_name, handler)
+
+    def on_any_status_change(self, handler):
+        """Register a handler for any status change"""
+        self.events.on('status_change', handler)
     
     def _setup_database(self):
         """Set up a database for trade storage with additional clearing fields"""
@@ -83,6 +111,32 @@ class EnhancedTradeWorkflow:
         conn.commit()
         conn.close()
         logger.info("Database setup complete")
+    
+    def _log_action(self, cursor, trade_id, action, old_status, new_status, notes, user="system"):
+        """Internal method to log actions to the audit table and emit events"""
+        cursor.execute('''
+        INSERT INTO audit_log (
+            trade_id, action, old_status, new_status, timestamp, user, notes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            trade_id,
+            action,
+            old_status,
+            new_status,
+            datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            user,
+            notes
+        ))
+        
+        # Emit events for status changes
+        if old_status != new_status:
+            # Emit a generic status_change event
+            self.events.emit('status_change', trade_id, old_status, new_status)
+            
+            # Emit a specific event for this status
+            if new_status:
+                event_name = f'status_{new_status.lower()}'
+                self.events.emit(event_name, trade_id, old_status, new_status)
     
     def create_trade(self, trade_data):
         """Create a new trade record"""
@@ -717,22 +771,6 @@ class EnhancedTradeWorkflow:
             return []
         finally:
             conn.close()
-    
-    def _log_action(self, cursor, trade_id, action, old_status, new_status, notes, user="system"):
-        """Internal method to log actions to the audit table"""
-        cursor.execute('''
-        INSERT INTO audit_log (
-            trade_id, action, old_status, new_status, timestamp, user, notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            trade_id,
-            action,
-            old_status,
-            new_status,
-            datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            user,
-            notes
-        ))
 
 
 # Simple CLI interface for testing
