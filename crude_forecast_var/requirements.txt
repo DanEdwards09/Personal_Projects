@@ -1,0 +1,11 @@
+pandas
+numpy
+matplotlib
+scikit-learn
+statsmodels
+yfinance
+prophet; sys_platform != 'emscripten'
+tensorflow; sys_platform != 'emscripten'
+streamlit
+plotly
+pydantic<2
