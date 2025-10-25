@@ -1,4 +1,12 @@
-# Team-4
-presentation link : https://www.canva.com/design/DAG2tRf0KLA/LtsdkuGbriB5Yjt1IDwCpg/edit?utm_content=DAG2tRf0KLA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton 
+# Mentor–Student Matching AI (JPMorgan Chase x Charity Hackathon)
 
-Word Document link: https://docs.google.com/document/d/11Iyeq0FQDQQPM_-YDeHY4Ri_EXDlRp5_x0squ61dSd8/edit?usp=sharing
+This project was developed during the JPMorgan Chase “Data for Good” Hackathon to improve mentor–student pairing for a charity using data science and machine learning.
+
+### Overview
+- Built a Random Forest model to predict engagement success between mentors and students.
+- Cleaned and merged multiple datasets, handling missing data and encoding text fields using Transformers.
+- Produced clustering insights on workfield similarity and prototype recommendations for automation.
+- Presented results to JPMorgan’s Data Science team and the partner charity.
+
+### Tools
+`Python`, `pandas`, `scikit-learn`, `transformers`, `matplotlib`, `seaborn`, `JupyterLab`
