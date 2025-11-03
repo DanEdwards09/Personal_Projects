@@ -1,0 +1,15 @@
+Synthetic Transactions Dataset (Compact)
+
+Rows: ~22112
+Columns:
+- txn_id: Unique transaction id (string)
+- timestamp: ISO8601 timestamp within the last 30 days
+- merchant_id: Merchant identifier (M001..M060)
+- acquirer_id: Simulated acquirer (A1..A5)
+- amount: Transaction amount (right-skewed, lognormal)
+- is_refund: 1 if refund, else 0
+- is_chargeback: 1 if chargeback, else 0 (mutually exclusive with refund in this toy data)
+
+Notes:
+- ~10% of merchants are "risky" with higher refund/chargeback probabilities and occasional volume/amount spikes.
+- Light weekend uplift is present.
